@@ -4,10 +4,22 @@
         <h1>
             <i class="fas fa-mountain"></i>Welcome To YelpCamp!</h1>
         <p>View our hand-picked campgrounds from all over the world</p>
-        <p>
-            <a class="btn-primary btn-lg" href="/campgrounds/new">Add New Campground</a>
-        </p>
+
+
     </header>
+
+    <div class="action-buttons">
+        <a class="btn-primary btn-lg add-campground" href="/campgrounds/new">Add New Campground</a>
+
+        <form action="/campgrounds" method="GET">
+            <div class="search">
+                <input type="text" class="search-bar" name="search" placeholder="Looking for a campground?">
+                <button type="submit" class="search-button">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+        </form>
+    </div>
 
     <div class="row text-center" style="display: flex; flex-wrap: wrap;">
         <% campgrounds.forEach(function (campground){ %>
@@ -28,5 +40,5 @@
     </div>
 
     <% include ../partials/pagination %>
-
+        <script src="https://rawgit.com/farzher/fuzzysort/master/fuzzysort.js"></script>
         <% include ../partials/footer %>

@@ -2,7 +2,8 @@ var express = require("express");
 var router = express.Router();
 var Campground = require("../models/campground");
 var middleware = require("../middleware");
-var NodeGeocoder = require('node-geocoder');
+var NodeGeocoder = require("node-geocoder");
+const fuzzysort = require("fuzzysort");
 
 var options = {
     provider: 'google',
@@ -17,15 +18,38 @@ var geocoder = NodeGeocoder(options);
 //  CAMPGROUNDS ROUTES
 // ============================
 
+
+//DISPLAY ALL CAMPGROUNDS
 router.get("/", function (req, res) {
     var perPage = 8;
     var pageQuery = parseInt(req.query.page);
     var pageNumber = pageQuery ? pageQuery : 1;
+    var results;
+
+    Campground.find({}, function (err, campgrounds) {
+        if (err) {
+            req.flash('error', 'Cannot find campground');
+        } else {
+            results = fuzzysort.go(req.query.search, campgrounds, { keys: ["name", "author.username"] });
+        }
+    });
+
     Campground.find({}).skip((perPage * pageNumber) - perPage).limit(perPage).exec(function (err, allCampgrounds) {
         Campground.count().exec(function (err, count) {
             if (err) {
-                console.log(err);
+                req.flash("error", err.message);
             } else {
+
+                if (results.total != 0) {
+                    allCampgrounds = [];
+
+                    results.forEach(function (result) {
+                        allCampgrounds.push(result.obj);
+                    });
+
+                    count = results.total;
+                }
+
                 res.render("campgrounds/index", {
                     campgrounds: allCampgrounds,
                     current: pageNumber,
@@ -50,7 +74,6 @@ router.post("/", middleware.isLoggedIn, function (req, res) {
 
     geocoder.geocode(req.body.location, function (err, data) {
         if (err || !data.length) {
-            console.log(err);
             req.flash('error', 'Invalid address');
             return res.redirect('back');
         }
@@ -101,8 +124,6 @@ router.get("/:id/edit", middleware.checkCampgroundPermission, function (req, res
 router.put("/:id", middleware.checkCampgroundPermission, function (req, res) {
     geocoder.geocode(req.body.location, function (err, data) {
         if (err || !data.length) {
-            console.log("ERROR!");
-            console.log(err);
             req.flash('error', 'Invalid address');
             return res.redirect('back');
         }
