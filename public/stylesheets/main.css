@@ -67,6 +67,11 @@ a:hover{
     padding: 0;
 }
 
+.campground-forms{
+    display: flex;
+    justify-content: center;
+}
+
 .thumbnail .caption-full{
     padding: 9px;
 }
@@ -104,7 +109,7 @@ a:hover{
 
 @media (max-width : 450px){
     .thumbnail {
-        max-width: 350px;
+        max-width: 280px;
         width: 100%;
         margin: 10px auto;
     }
@@ -121,6 +126,12 @@ a:hover{
 
     .side-content{
         order: 2;
+    }
+
+    .details-content .thumbnail {
+        max-width: 350px;
+        width: 100%;
+        margin: 10px auto;
     }
 
     #add-campground{
