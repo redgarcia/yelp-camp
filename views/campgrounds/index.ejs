@@ -7,11 +7,11 @@
 
 
     </header>
-
     <div class="action-buttons">
-        <a class="btn-primary btn-lg add-campground" href="/campgrounds/new">Add New Campground</a>
+        <a id="add-campground" class="btn-success btn-lg" href="/campgrounds/new">
+            <i class="fas fa-plus"></i> Add New Campground</a>
 
-        <form action="/campgrounds" method="GET">
+        <form id="search-form" action="/campgrounds" method="GET">
             <div class="search">
                 <input type="text" class="search-bar" name="search" placeholder="Looking for a campground?">
                 <button type="submit" class="search-button">
@@ -21,7 +21,7 @@
         </form>
     </div>
 
-    <div class="row text-center" style="display: flex; flex-wrap: wrap;">
+    <div class="row camp-tiles text-center" style="display: flex; flex-wrap: wrap;">
         <% campgrounds.forEach(function (campground){ %>
             <div class="col-md-3 col-sm-6">
                 <div class="thumbnail">

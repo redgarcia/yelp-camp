@@ -25,39 +25,46 @@ router.get("/", function (req, res) {
     var pageQuery = parseInt(req.query.page);
     var pageNumber = pageQuery ? pageQuery : 1;
     var results;
+    var allCampgrounds = [];
 
-    Campground.find({}, function (err, campgrounds) {
-        if (err) {
-            req.flash('error', 'Cannot find campground');
-        } else {
+    if (req.query.search) {
+        Campground.find({}, function (err, campgrounds) {
             results = fuzzysort.go(req.query.search, campgrounds, { keys: ["name", "author.username"] });
-        }
-    });
 
-    Campground.find({}).skip((perPage * pageNumber) - perPage).limit(perPage).exec(function (err, allCampgrounds) {
-        Campground.count().exec(function (err, count) {
-            if (err) {
-                req.flash("error", err.message);
+            if (results < 1) {
+                req.flash('error', 'Cannot find campground');
+                return res.redirect("back");
             } else {
-
-                if (results.total != 0) {
-                    allCampgrounds = [];
-
-                    results.forEach(function (result) {
-                        allCampgrounds.push(result.obj);
-                    });
-
-                    count = results.total;
-                }
+                campgrounds = [];
+                results.forEach(function (result) {
+                    campgrounds.push(result.obj);
+                });
+                count = results.total;
 
                 res.render("campgrounds/index", {
-                    campgrounds: allCampgrounds,
+                    campgrounds: campgrounds,
                     current: pageNumber,
                     pages: Math.ceil(count / perPage)
                 });
             }
         });
-    });
+    } else {
+        Campground.find({}).skip((perPage * pageNumber) - perPage).limit(perPage).exec(function (err, allCampgrounds) {
+            Campground.count().exec(function (err, count) {
+                if (err) {
+                    req.flash("error", err.message);
+                } else {
+
+                    res.render("campgrounds/index", {
+                        campgrounds: allCampgrounds,
+                        current: pageNumber,
+                        pages: Math.ceil(count / perPage)
+                    });
+                }
+            });
+        });
+
+    }
 });
 
 
