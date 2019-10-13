@@ -104,16 +104,35 @@ a:hover{
 
 @media (max-width : 450px){
     .thumbnail {
-        max-width: 280px;
+        max-width: 350px;
         width: 100%;
+        margin: 10px auto;
     }
 
     .camp-tiles{
         justify-content: center;
     }
 
+    .details-content{
+        display: flex;
+        justify-content: center;
+        flex-direction: column;
+    }
+
+    .side-content{
+        order: 2;
+    }
+
     #add-campground{
         margin: 20px auto;
         order: 2;
+    }
+
+    #details-logo{
+        display: none;
+    }
+
+    #map{
+        margin-bottom: 20px;
     }
 }
